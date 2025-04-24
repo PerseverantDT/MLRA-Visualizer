@@ -1,0 +1,59 @@
+name: Check for build errors
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build-job:
+    name: Build for ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    env:
+      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            name: Linux x64
+            configurePreset: linux-x64
+            buildPreset: linux-x64-release
+          - os: windows-latest
+            name: Windows x64
+            configurePreset: windows-x64
+            buildPreset: windows-x64-release
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install SDL3 dependencies (Linux)
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y --no-install-recommends \
+            autoconf \
+            automake \
+            autoconf-archive \
+            pkg-config \
+            libtool \
+            libltdl-dev\
+            libx11-dev \
+            libxft-dev \
+            libxext-dev \
+            libwayland-dev \
+            wayland-protocols \
+            libxkbcommon-dev \
+            libegl1-mesa-dev \
+            libibus-1.0-dev
+      - name: Build MLRA Visualizer
+        run: |
+          cmake --preset ${{ matrix.configurePreset }} -DMLRA_ENABLE_ADDITIONAL_WARNINGS=ON -DMLRA_ENABLE_ANALYZER=ON -DMLRA_TUNE_FOR_AVX2=ON -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
+          cmake --build --preset ${{ matrix.buildPreset }}
