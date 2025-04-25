@@ -35,6 +35,7 @@ add_executable(mlra-visualizer WIN32
     src/main.c
     src/App/Log.c
     src/Core/RegisterCost.c
+    src/Core/RegisterInstruction.c
 )
 
 target_include_directories(mlra-visualizer PRIVATE
