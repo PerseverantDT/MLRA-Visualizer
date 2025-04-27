@@ -70,9 +70,9 @@ SDL_AppResult SDL_AppInit(
 
     if (!SDL_CreateWindowAndRenderer(
         "Minimum Local Register Allocation Visualizer",
-        1280, // NOLINT(*-magic-numbers)
+        960, // NOLINT(*-magic-numbers)
         720, // NOLINT(*-magic-numbers)
-        SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN | SDL_WINDOW_HIDDEN,
+        SDL_WINDOW_VULKAN | SDL_WINDOW_HIDDEN,
         &window,
         &renderer
     )) {
@@ -130,21 +130,9 @@ SDL_AppResult SDL_AppEvent(
     SDL_Event *const event
 )
 {
-    MLRA_Application *app = appstate;
-    
-    SDL_Rect rect;
-    switch (event->type) {
-        case SDL_EVENT_WINDOW_RESIZED:
-            rect.x = 0;
-            rect.y = 0;
-            rect.w = event->window.data1;
-            rect.h = event->window.data2;
+    [[maybe_unused]] MLRA_Application *app = appstate;
 
-            SDL_SetRenderViewport(
-                app->renderer,
-                &rect
-            );
-            return SDL_APP_CONTINUE;
+    switch (event->type) {
         case SDL_EVENT_QUIT:
             return SDL_APP_SUCCESS;
         default:
