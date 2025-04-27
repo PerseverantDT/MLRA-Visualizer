@@ -6,10 +6,10 @@
 
 __attribute__((nonnull(4)))
 void MLRA_LogOutput(
-    void *userdata,
-    int category,
-    SDL_LogPriority priority,
-    char const *message
+    void *const userdata,
+    int const category,
+    SDL_LogPriority const priority,
+    char const *const message
 )
 {
     (void)userdata;

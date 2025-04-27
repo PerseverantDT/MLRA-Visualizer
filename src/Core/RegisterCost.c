@@ -13,7 +13,7 @@ struct MLRA_RegisterCostArray_
 
 [[gnu::access(read_write, 1)]]
 void MLRA_DestroyRegisterCostArray(
-    MLRA_RegisterCostArray *array
+    MLRA_RegisterCostArray *const array
 )
 {
     if (array == nullptr) {
@@ -26,7 +26,7 @@ void MLRA_DestroyRegisterCostArray(
 [[nodiscard]]
 [[gnu::malloc, gnu::malloc(MLRA_DestroyRegisterCostArray, 1)]]
 MLRA_RegisterCostArray *MLRA_CreateRegisterCostArray(
-    size_t registerCount
+    size_t const registerCount
 )
 {
     size_t costsSize;
@@ -54,8 +54,8 @@ MLRA_RegisterCostArray *MLRA_CreateRegisterCostArray(
 
 [[nodiscard]]
 MLRA_RegisterCostArray *MLRA_ResizeRegisterCostArray(
-    MLRA_RegisterCostArray *array,
-    size_t newRegisterCount
+    MLRA_RegisterCostArray *const array,
+    size_t const newRegisterCount
 )
 {
     size_t costsSize;
@@ -87,7 +87,7 @@ MLRA_RegisterCostArray *MLRA_ResizeRegisterCostArray(
 [[nodiscard, gnu::pure]]
 [[gnu::nonnull(1), gnu::access(read_only, 1)]]
 size_t MLRA_GetRegisterCostArraySize(
-    MLRA_RegisterCostArray const *array
+    MLRA_RegisterCostArray const *const array
 )
 {
     return array->count;
@@ -96,8 +96,8 @@ size_t MLRA_GetRegisterCostArraySize(
 [[nodiscard, gnu::pure]]
 [[gnu::nonnull(1), gnu::access(read_only, 1)]]
 MLRA_RegisterCost MLRA_GetRegisterCostInArray(
-    MLRA_RegisterCostArray const *array,
-    size_t index
+    MLRA_RegisterCostArray const *const array,
+    size_t const index
 )
 {
     assert(index < array->count);
@@ -107,9 +107,9 @@ MLRA_RegisterCost MLRA_GetRegisterCostInArray(
 
 [[gnu::nonnull(1), gnu::access(read_write, 1)]]
 void MLRA_SetRegisterCostInArray(
-    MLRA_RegisterCostArray *array,
-    size_t index,
-    MLRA_RegisterCost registerCost
+    MLRA_RegisterCostArray *const array,
+    size_t const index,
+    MLRA_RegisterCost const registerCost
 )
 {
     assert(index < array->count);

@@ -43,7 +43,7 @@ static void MLRA_WarnWhenMemorySpillCostIsSmallerThanRegisterCost(
 }
 
 void MLRA_DestroyScenario(
-    MLRA_Scenario *scenario
+    MLRA_Scenario *const scenario
 )
 {
     if (scenario == nullptr) {
@@ -58,7 +58,7 @@ void MLRA_DestroyScenario(
 [[nodiscard]]
 [[gnu::malloc, gnu::malloc(MLRA_DestroyScenario, 1)]]
 MLRA_Scenario *MLRA_CreateScenario(
-    size_t registerCount,
+    size_t const registerCount,
     MLRA_RegisterCost const memorySpillCost
 )
 {
@@ -108,7 +108,7 @@ MLRA_Scenario *MLRA_CreateScenario(
 [[nodiscard, gnu::pure]]
 [[gnu::nonnull(1), gnu::access(read_only, 1)]]
 MLRA_RegisterCost MLRA_GetMemorySpillCostInScenario(
-    MLRA_Scenario const *scenario
+    MLRA_Scenario const *const scenario
 )
 {
     return scenario->memorySpillCost;
@@ -116,7 +116,7 @@ MLRA_RegisterCost MLRA_GetMemorySpillCostInScenario(
 
 [[gnu::nonnull(1), gnu::access(read_write, 1)]]
 void MLRA_SetMemorySpillCostInScenario(
-    MLRA_Scenario *scenario,
+    MLRA_Scenario *const scenario,
     MLRA_RegisterCost const memorySpillCost
 )
 {
@@ -139,7 +139,7 @@ void MLRA_SetMemorySpillCostInScenario(
 [[nodiscard, gnu::pure]]
 [[gnu::nonnull(1), gnu::access(read_only, 1)]]
 size_t MLRA_GetRegisterCountInScenario(
-    MLRA_Scenario const *scenario
+    MLRA_Scenario const *const scenario
 )
 {
     return MLRA_GetRegisterCostArraySize(scenario->registerCosts);
@@ -147,8 +147,8 @@ size_t MLRA_GetRegisterCountInScenario(
 
 [[gnu::nonnull(1), gnu::access(read_write, 1)]]
 void MLRA_SetRegisterCountInScenario(
-    MLRA_Scenario *scenario,
-    size_t count
+    MLRA_Scenario *const scenario,
+    size_t const count
 )
 {
     MLRA_RegisterCostArray *registerCosts = MLRA_ResizeRegisterCostArray(scenario->registerCosts, count);
@@ -168,8 +168,8 @@ void MLRA_SetRegisterCountInScenario(
 [[nodiscard, gnu::pure]]
 [[gnu::nonnull(1), gnu::access(read_only, 1)]]
 MLRA_RegisterCost MLRA_GetRegisterCostInScenario(
-    MLRA_Scenario const *scenario,
-    size_t index
+    MLRA_Scenario const *const scenario,
+    size_t const index
 )
 {
     return MLRA_GetRegisterCostInArray(scenario->registerCosts, index);
@@ -177,9 +177,9 @@ MLRA_RegisterCost MLRA_GetRegisterCostInScenario(
 
 [[gnu::nonnull(1), gnu::access(read_write, 1)]]
 void MLRA_SetRegisterCostInScenario(
-    MLRA_Scenario *scenario,
-    size_t index,
-    MLRA_RegisterCost registerCost
+    MLRA_Scenario *const scenario,
+    size_t const index,
+    MLRA_RegisterCost const registerCost
 )
 {
     assert(registerCost.load > 0);
@@ -196,7 +196,7 @@ void MLRA_SetRegisterCostInScenario(
 [[nodiscard, gnu::pure]]
 [[gnu::nonnull(1), gnu::access(read_only, 1)]]
 size_t MLRA_GetRegisterInstructionCountInScenario(
-    MLRA_Scenario const *scenario
+    MLRA_Scenario const *const scenario
 )
 {
     return MLRA_GetRegisterInstructionCountInList(scenario->registerInstructions);
@@ -205,8 +205,8 @@ size_t MLRA_GetRegisterInstructionCountInScenario(
 [[nodiscard, gnu::pure]]
 [[gnu::nonnull(1), gnu::access(read_only, 1)]]
 MLRA_RegisterInstruction MLRA_GetRegisterInstructionInScenario(
-    MLRA_Scenario const *scenario,
-    size_t index
+    MLRA_Scenario const *const scenario,
+    size_t const index
 )
 {
     return MLRA_GetRegisterInstructionInList(scenario->registerInstructions, index);
@@ -214,8 +214,8 @@ MLRA_RegisterInstruction MLRA_GetRegisterInstructionInScenario(
 
 [[gnu::nonnull(1), gnu::access(read_write, 1)]]
 void MLRA_AppendRegisterInstructionToScenario(
-    MLRA_Scenario *scenario,
-    MLRA_RegisterInstruction instruction
+    MLRA_Scenario *const scenario,
+    MLRA_RegisterInstruction const instruction
 )
 {
     MLRA_AppendRegisterInstructionToList(scenario->registerInstructions, instruction);
@@ -223,9 +223,9 @@ void MLRA_AppendRegisterInstructionToScenario(
 
 [[gnu::nonnull(1), gnu::access(read_write, 1)]]
 void MLRA_InsertRegisterInstructionToScenario(
-    MLRA_Scenario *scenario,
-    size_t index,
-    MLRA_RegisterInstruction instruction
+    MLRA_Scenario *const scenario,
+    size_t const index,
+    MLRA_RegisterInstruction const instruction
 )
 {
     MLRA_InsertRegisterInstructionAtList(scenario->registerInstructions, index, instruction);
@@ -233,7 +233,7 @@ void MLRA_InsertRegisterInstructionToScenario(
 
 [[gnu::nonnull(1), gnu::access(read_write, 1)]]
 void MLRA_RemoveRegisterInstructionBehindScenario(
-    MLRA_Scenario *scenario
+    MLRA_Scenario *const scenario
 )
 {
     MLRA_RemoveRegisterInstructionBehindList(scenario->registerInstructions);
@@ -241,8 +241,8 @@ void MLRA_RemoveRegisterInstructionBehindScenario(
 
 [[gnu::nonnull(1), gnu::access(read_write, 1)]]
 void MLRA_RemoveRegisterInstructionAtScenario(
-    MLRA_Scenario *scenario,
-    size_t index
+    MLRA_Scenario *const scenario,
+    size_t const index
 )
 {
     MLRA_RemoveRegisterInstructionAtList(scenario->registerInstructions, index);

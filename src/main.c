@@ -20,9 +20,9 @@
 
 [[gnu::cold]]
 SDL_AppResult SDL_AppInit(
-    void **appstate,
-    int argc,
-    char **argv
+    void **const appstate,
+    int const argc,
+    char **const argv
 )
 {
     (void)argc;
@@ -126,8 +126,8 @@ SDL_AppResult SDL_AppInit(
 
 [[gnu::hot]]
 SDL_AppResult SDL_AppEvent(
-    void *appstate,
-    SDL_Event *event
+    void *const appstate,
+    SDL_Event *const event
 )
 {
     MLRA_Application *app = appstate;
@@ -154,7 +154,7 @@ SDL_AppResult SDL_AppEvent(
 
 [[gnu::hot]]
 SDL_AppResult SDL_AppIterate(
-    void *appstate
+    void *const appstate
 )
 {
     MLRA_Application *app = appstate;
@@ -168,8 +168,8 @@ SDL_AppResult SDL_AppIterate(
 
 [[gnu::cold]]
 void SDL_AppQuit(
-    void *appstate,
-    SDL_AppResult result
+    void *const appstate,
+    SDL_AppResult const result
 )
 {
     (void)result;
