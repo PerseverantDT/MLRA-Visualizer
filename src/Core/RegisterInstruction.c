@@ -124,7 +124,7 @@ void MLRA_InsertRegisterInstructionAtList(
     assert(index <= list->count);
 
     if (list->instructions == nullptr) {
-        list->instructions = malloc(8 * sizeof(MLRA_RegisterInstruction));
+        list->instructions = calloc(8, sizeof(MLRA_RegisterInstruction));
         if (list->instructions == nullptr) {
             return;
         }
