@@ -1,9 +1,8 @@
 #include "MLRA/Core/RegisterCost.h"
 
-#include <SDL3/SDL_stdinc.h>
-
 #include <assert.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 struct MLRA_RegisterCostArray_
 {
@@ -20,7 +19,7 @@ void MLRA_DestroyRegisterCostArray(
         return;
     }
 
-    SDL_free(array);
+    free(array);
 }
 
 [[nodiscard]]
@@ -39,7 +38,7 @@ MLRA_RegisterCostArray *MLRA_CreateRegisterCostArray(
         return nullptr;
     }
 
-    MLRA_RegisterCostArray *array = SDL_malloc(totalSize);
+    MLRA_RegisterCostArray *array = malloc(totalSize);
     if (array == nullptr) {
         return nullptr;
     }
@@ -69,7 +68,7 @@ MLRA_RegisterCostArray *MLRA_ResizeRegisterCostArray(
     }
 
     size_t oldCount = array == nullptr ? 0 : array->count;
-    MLRA_RegisterCostArray *newArray = SDL_realloc(array, totalSize);
+    MLRA_RegisterCostArray *newArray = realloc(array, totalSize);
     if (newArray == nullptr) {
         return nullptr;
     }

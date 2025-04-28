@@ -1,10 +1,9 @@
 #include "MLRA/Core/RegisterInstruction.h"
 
-#include <SDL3/SDL_stdinc.h>
-
 #include <assert.h>
 #include <limits.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
 
 struct MLRA_RegisterInstructionList_
@@ -24,17 +23,17 @@ void MLRA_DestroyRegisterInstructionList(
     }
 
     if (list->instructions != nullptr) {
-        SDL_free(list->instructions);
+        free(list->instructions);
     }
 
-    SDL_free(list);
+    free(list);
 }
 
 [[nodiscard]]
 [[gnu::malloc, gnu::malloc(MLRA_DestroyRegisterInstructionList)]]
 MLRA_RegisterInstructionList *MLRA_CreateRegisterInstructionList(void)
 {
-    MLRA_RegisterInstructionList *list = SDL_malloc(sizeof(MLRA_RegisterInstructionList));
+    MLRA_RegisterInstructionList *list = malloc(sizeof(MLRA_RegisterInstructionList));
     if (list == nullptr) {
         return nullptr;
     }
@@ -79,7 +78,7 @@ void MLRA_AppendRegisterInstructionToList(
     );
 
     if (list->instructions == nullptr) {
-        list->instructions = SDL_malloc(8 * sizeof(MLRA_RegisterInstruction));
+        list->instructions = malloc(8 * sizeof(MLRA_RegisterInstruction));
         if (list->instructions == nullptr) {
             return;
         }
@@ -98,7 +97,7 @@ void MLRA_AppendRegisterInstructionToList(
             return;
         }
 
-        MLRA_RegisterInstruction *instructions = SDL_realloc(list->instructions, totalSize);
+        MLRA_RegisterInstruction *instructions = realloc(list->instructions, totalSize);
         if (instructions == nullptr) {
             return;
         }
@@ -125,7 +124,7 @@ void MLRA_InsertRegisterInstructionAtList(
     assert(index <= list->count);
 
     if (list->instructions == nullptr) {
-        list->instructions = SDL_malloc(8 * sizeof(MLRA_RegisterInstruction));
+        list->instructions = malloc(8 * sizeof(MLRA_RegisterInstruction));
         if (list->instructions == nullptr) {
             return;
         }
@@ -144,7 +143,7 @@ void MLRA_InsertRegisterInstructionAtList(
             return;
         }
 
-        MLRA_RegisterInstruction *instructions = SDL_realloc(list->instructions, totalSize);
+        MLRA_RegisterInstruction *instructions = realloc(list->instructions, totalSize);
         if (instructions == nullptr) {
             return;
         }
@@ -178,7 +177,7 @@ void MLRA_RemoveRegisterInstructionBehindList(
     size_t spaceThreshold;
     if (!__builtin_mul_overflow(list->count, 3, &spaceThreshold)) {
         if (spaceThreshold > list->capacity) {
-            MLRA_RegisterInstruction *instructions = SDL_realloc(list->instructions, sizeof(MLRA_RegisterInstruction) * list->count * 2);
+            MLRA_RegisterInstruction *instructions = realloc(list->instructions, sizeof(MLRA_RegisterInstruction) * list->count * 2);
             if (instructions == nullptr) {
                 return;
             }
@@ -210,7 +209,7 @@ void MLRA_RemoveRegisterInstructionAtList(
     size_t spaceThreshold;
     if (!__builtin_mul_overflow(list->count, 3, &spaceThreshold)) {
         if (spaceThreshold > list->capacity) {
-            MLRA_RegisterInstruction *instructions = SDL_realloc(list->instructions, sizeof(MLRA_RegisterInstruction) * list->count * 2);
+            MLRA_RegisterInstruction *instructions = realloc(list->instructions, sizeof(MLRA_RegisterInstruction) * list->count * 2);
             if (instructions == nullptr) {
                 return;
             }

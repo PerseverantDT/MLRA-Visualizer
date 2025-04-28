@@ -3,12 +3,12 @@
 #include "MLRA/Core/RegisterInstruction.h"
 
 #include <SDL3/SDL_log.h>
-#include <SDL3/SDL_stdinc.h>
 
 #include <assert.h>
 #include <errno.h>
 #include <inttypes.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
 
 struct MLRA_Scenario_
@@ -52,7 +52,7 @@ void MLRA_DestroyScenario(
 
     MLRA_DestroyRegisterCostArray(scenario->registerCosts);
     MLRA_DestroyRegisterInstructionList(scenario->registerInstructions);
-    SDL_free(scenario);
+    free(scenario);
 }
 
 [[nodiscard]]
@@ -85,7 +85,7 @@ MLRA_Scenario *MLRA_CreateScenario(
         return nullptr;
     }
 
-    MLRA_Scenario *scenario = SDL_malloc(sizeof(MLRA_Scenario));
+    MLRA_Scenario *scenario = malloc(sizeof(MLRA_Scenario));
     if (scenario == nullptr) {
         SDL_LogError(
             SDL_LOG_CATEGORY_APPLICATION,

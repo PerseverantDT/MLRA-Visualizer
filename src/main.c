@@ -15,8 +15,8 @@
 #define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL_main.h>
 
-#include <SDL3/SDL_stdinc.h>
 #include <errno.h>
+#include <stdlib.h>
 
 [[gnu::cold]]
 SDL_AppResult SDL_AppInit(
@@ -104,7 +104,7 @@ SDL_AppResult SDL_AppInit(
         return SDL_APP_FAILURE;
     }
 
-    MLRA_Application *application = SDL_malloc(sizeof(MLRA_Application));
+    MLRA_Application *application = malloc(sizeof(MLRA_Application));
     if (application == nullptr) {
         SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "Could not create application: %s", strerror(errno));
 
@@ -168,7 +168,7 @@ void SDL_AppQuit(
         SDL_DestroyRenderer(app->renderer);
         SDL_DestroyWindow(app->window);
 
-        SDL_free(app);
+        free(app);
     }
 
     TTF_Quit();
