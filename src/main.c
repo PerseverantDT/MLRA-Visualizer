@@ -1,11 +1,13 @@
-#include "MLRA/Core/Scenario.h"
-
 #include <raylib.h>
 #include <raygui.h>
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-void DrawEditRegisterCountDialogBox(bool *visible, size_t *registerCount)
+[[gnu::nonnull(1), gnu::access(read_write, 1)]]
+[[gnu::nonnull(2), gnu::access(read_write, 2)]]
+static void DrawEditRegisterCountDialogBox(bool *visible, size_t *registerCount)
 {
     static bool lastVisible = false;
     static char buffer[16];
@@ -43,7 +45,8 @@ void DrawEditRegisterCountDialogBox(bool *visible, size_t *registerCount)
     lastVisible = true;
 }
 
-void DrawRegisterCount(size_t registerCount, bool *editRegisterCount)
+[[gnu::nonnull(2), gnu::access(read_write, 2)]]
+static void DrawRegisterCount(size_t registerCount, bool *editRegisterCount)
 {
     static int posX = 20;
     static int posY = 20;
@@ -63,7 +66,7 @@ void DrawRegisterCount(size_t registerCount, bool *editRegisterCount)
     );
     if (!(*editRegisterCount)) {
         *editRegisterCount = GuiButton(
-            (Rectangle){posX + 224, posY + 25, 40, 20},
+            (Rectangle){(float)posX + 224.0F, (float)posY + 25.0F, 40, 20},
             "Edit"
         );
     }
@@ -81,8 +84,6 @@ int main(void)
     GuiLoadStyle("assets/styles/cyber/style_cyber.rgs");
 
     bool editRegisterCount = false;
-
-    char const *currentStatusText = "Sample Text";
 
     while (!WindowShouldClose()) {
         BeginDrawing();
