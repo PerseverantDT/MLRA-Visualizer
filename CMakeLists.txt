@@ -30,12 +30,24 @@ option(MLRA_ENABLE_ANALYZER "Enable GCC Static Analyzer (slows build)" OFF)
 find_package(raylib CONFIG REQUIRED)
 find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
 
+add_library(raygui OBJECT
+    src/raygui.c
+)
+target_link_libraries(raygui PRIVATE
+    raylib
+)
+target_include_directories(raygui PRIVATE
+    ${RAYGUI_INCLUDE_DIRS}
+)
+
+
 # --- Executable Definition ---
 add_executable(mlra-visualizer
     src/main.c
     src/Core/RegisterCost.c
     src/Core/RegisterInstruction.c
     src/Core/Scenario.c
+    $<TARGET_OBJECTS:raygui>
 )
 
 add_custom_command(TARGET mlra-visualizer POST_BUILD
