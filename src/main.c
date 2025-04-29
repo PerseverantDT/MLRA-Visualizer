@@ -9,7 +9,7 @@
 
 [[gnu::nonnull(1), gnu::access(read_write, 1)]]
 [[gnu::nonnull(2), gnu::access(read_write, 2)]]
-static void DrawEditRegisterCountDialogBox(bool *visible, size_t *registerCount)
+static void DrawEditRegisterCountDialogBox(bool *visible, MLRA_Scenario *scenario)
 {
     static bool lastVisible = false;
     static char buffer[16];
@@ -36,7 +36,7 @@ static void DrawEditRegisterCountDialogBox(bool *visible, size_t *registerCount)
     if (pressedButton == 2) {
         size_t result = strtoull(buffer, nullptr, 10);
         if (result > 0) {
-            *registerCount = result;
+            MLRA_SetRegisterCountInScenario(scenario, result);
         }
     }
 
@@ -218,8 +218,7 @@ int main(void)
     const int screenWidth = 960;
     const int screenHeight = 720;
 
-    size_t registerCount = 8;
-    MLRA_Scenario *scenario = MLRA_CreateScenario(registerCount, (MLRA_RegisterCost){5, 5});
+    MLRA_Scenario *scenario = MLRA_CreateScenario(8, (MLRA_RegisterCost){5, 5});
     if (scenario == nullptr) {
         return 1;
     }
@@ -251,8 +250,8 @@ int main(void)
         BeginDrawing();
         ClearBackground(GetColor((unsigned int)GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
 
-        DrawRegisterCount(registerCount, showEditRegisterCountButton, &editRegisterCount);
-        DrawEditRegisterCountDialogBox(&editRegisterCount, &registerCount);
+        DrawRegisterCount(MLRA_GetRegisterCountInScenario(scenario), showEditRegisterCountButton, &editRegisterCount);
+        DrawEditRegisterCountDialogBox(&editRegisterCount, scenario);
         DrawMemorySpillCost(
             MLRA_GetMemorySpillCostInScenario(scenario),
             showEditMemorySpillLoadCostButton,
