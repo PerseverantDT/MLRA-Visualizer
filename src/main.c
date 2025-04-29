@@ -213,12 +213,121 @@ static void DrawEditMemorySpillStoreCostDialogBox(
     lastVisible = true;
 }
 
+static void DrawRegisterCosts(
+    MLRA_Scenario const *scenario,
+    size_t *displayedRegisterPage,
+    size_t registerCostsPerPage
+)
+{
+    constexpr int registerCostTextPosX = 20;
+    constexpr int registerCostTextPosY = 200;
+    constexpr int registerCostTextSpacing = 24;
+
+    size_t registerCount = MLRA_GetRegisterCountInScenario(scenario);
+    size_t maxDisplayedRegisterPage = (registerCount / registerCostsPerPage) + 1;
+
+    if (*displayedRegisterPage >= maxDisplayedRegisterPage) {
+        *displayedRegisterPage = maxDisplayedRegisterPage - 1;
+    }
+
+    DrawText(
+        "Register Costs",
+        registerCostTextPosX,
+        registerCostTextPosY,
+        20,
+        GetColor((unsigned int)GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL))
+    );
+
+    for (size_t i = 0; i < registerCostsPerPage; i++) {
+        size_t currentRegisterIndex = i + (*displayedRegisterPage * registerCostsPerPage);
+        if (currentRegisterIndex < registerCount) {
+            MLRA_RegisterCost registerCost = MLRA_GetRegisterCostInScenario(scenario, currentRegisterIndex);
+            DrawText(
+                TextFormat("Register %zu: Load: %d; Store: %d", currentRegisterIndex, registerCost.load, registerCost.store),
+                registerCostTextPosX + 20,
+                registerCostTextPosY + ((int)(i + 1) * registerCostTextSpacing + 32),
+                20,
+                GetColor((unsigned int)GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL))
+            );
+        }
+    }
+}
+
+static void DrawRegisterCostsPageSelector(
+    size_t *displayedRegisterPage,
+    size_t maxDisplayedRegisterPage
+)
+{
+    constexpr float pageSelectorPosX = 20;
+    constexpr float pageSelectorPosY = 230;
+    constexpr float pageSelectorSpacing = 24;
+    constexpr size_t pageSelectorMaxCount = 15;
+
+    size_t startPage = *displayedRegisterPage > (pageSelectorMaxCount - 1) / 2
+        ? *displayedRegisterPage < maxDisplayedRegisterPage - (pageSelectorMaxCount - 1) / 2
+            ? *displayedRegisterPage - (pageSelectorMaxCount - 1) / 2
+            : maxDisplayedRegisterPage - pageSelectorMaxCount + 1
+        : 0;
+    size_t endPage = startPage + pageSelectorMaxCount - 1 < maxDisplayedRegisterPage
+        ? startPage + pageSelectorMaxCount - 1
+        : maxDisplayedRegisterPage;
+
+    if (*displayedRegisterPage == 0) {
+        GuiDisable();
+    }
+    bool pressed = GuiButton(
+        (Rectangle){ pageSelectorPosX, pageSelectorPosY, 20, 20 },
+        "<"
+    );
+    if (pressed) {
+        *displayedRegisterPage -= 1;
+    }
+    if (*displayedRegisterPage == 0) {
+        GuiEnable();
+    }
+
+    size_t i = startPage;
+    for (; i <= endPage; i++) {
+        if (i == *displayedRegisterPage) {
+            GuiDisable();
+            GuiButton(
+                (Rectangle){ pageSelectorPosX + ((float)(i - startPage + 1) * pageSelectorSpacing), pageSelectorPosY, 20, 20 },
+                TextFormat("%zu", i + 1)
+            );
+            GuiEnable();
+        }
+        else {
+            pressed = GuiButton(
+                (Rectangle){ pageSelectorPosX + ((float)(i - startPage + 1) * pageSelectorSpacing), pageSelectorPosY, 20, 20 },
+                TextFormat("%zu", i + 1)
+            );
+            if (pressed) {
+                *displayedRegisterPage = i;
+            }
+        }
+    }
+
+    if (*displayedRegisterPage == maxDisplayedRegisterPage) {
+        GuiDisable();
+    }
+    pressed = GuiButton(
+        (Rectangle){ pageSelectorPosX + ((float)(i - startPage + 1) * pageSelectorSpacing), pageSelectorPosY, 20, 20 },
+        ">"
+    );
+    if (pressed) {
+        *displayedRegisterPage += 1;
+    }
+    if (*displayedRegisterPage == maxDisplayedRegisterPage) {
+        GuiEnable();
+    }
+}
+
 int main(void)
 {
     const int screenWidth = 960;
     const int screenHeight = 720;
 
-    MLRA_Scenario *scenario = MLRA_CreateScenario(8, (MLRA_RegisterCost){5, 5});
+    MLRA_Scenario *scenario = MLRA_CreateScenario(200, (MLRA_RegisterCost){5, 5});
     if (scenario == nullptr) {
         return 1;
     }
@@ -226,6 +335,9 @@ int main(void)
     SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight, "Minimum Local Register Allocation Visualizer");
     GuiLoadStyle("assets/styles/cyber/style_cyber.rgs");
+
+    size_t currentRegisterPage = 0;
+    constexpr size_t registerCostsPerPage = 10;
 
     bool showEditRegisterCountButton = true;
     bool editRegisterCount = false;
@@ -261,6 +373,8 @@ int main(void)
         );
         DrawEditMemorySpillLoadCostDialogBox(&editMemorySpillLoadCost, scenario);
         DrawEditMemorySpillStoreCostDialogBox(&editMemorySpillStoreCost, scenario);
+        DrawRegisterCosts(scenario, &currentRegisterPage, registerCostsPerPage);
+        DrawRegisterCostsPageSelector(&currentRegisterPage, ( MLRA_GetRegisterCountInScenario(scenario) - 1) / registerCostsPerPage);
 
         EndDrawing();
     }
