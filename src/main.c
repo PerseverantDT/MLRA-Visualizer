@@ -26,7 +26,7 @@ static void DrawEditRegisterCountDialogBox(bool *visible, size_t *registerCount)
     int pressedButton = GuiTextInputBox(
         (Rectangle){ 330, 260, 300, 200 },
         "Edit Register Count",
-        "Set the number of registers to use for the scenario. Minimum of 1.",
+        "Set the number of registers to use for\nthe scenario. Minimum of 1.",
         "Cancel;Apply",
         buffer,
         15,
