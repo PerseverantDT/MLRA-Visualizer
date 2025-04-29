@@ -34,25 +34,21 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Install SDL3 dependencies (Linux)
+      - name: Install raylib dependencies (Linux)
         if: ${{ matrix.configurePreset == 'linux-x64' }}
         run: |
           sudo apt-get update -y
           sudo apt-get install -y --no-install-recommends \
-            autoconf \
-            automake \
-            autoconf-archive \
-            pkg-config \
-            libtool \
-            libltdl-dev\
+            libasound2-dev \
             libx11-dev \
-            libxft-dev \
-            libxext-dev \
+            libxrandr-dev \
+            libxi-dev \
+            libgl1-mesa-dev \
+            libglu1-mesa-dev \
+            libxcursor-dev \
+            libxinerama-dev \
             libwayland-dev \
-            wayland-protocols \
-            libxkbcommon-dev \
-            libegl1-mesa-dev \
-            libibus-1.0-dev
+            libxkbcommon-dev
       - name: Build MLRA Visualizer
         run: |
           cmake --preset ${{ matrix.configurePreset }} -DMLRA_ENABLE_ADDITIONAL_WARNINGS=ON -DMLRA_ENABLE_ANALYZER=ON -DMLRA_TUNE_FOR_AVX2=ON -DCMAKE_COMPILE_WARNING_AS_ERROR=ON

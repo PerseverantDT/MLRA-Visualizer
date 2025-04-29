@@ -27,16 +27,20 @@ option(MLRA_ENABLE_ADDITIONAL_WARNINGS "Check for additional warnings during com
 option(MLRA_ENABLE_ANALYZER "Enable GCC Static Analyzer (slows build)" OFF)
 
 # --- Dependencies ---
-find_package(SDL3 CONFIG REQUIRED)
-find_package(SDL3_ttf CONFIG REQUIRED)
+find_package(raylib CONFIG REQUIRED)
+find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
 
 # --- Executable Definition ---
-add_executable(mlra-visualizer WIN32
+add_executable(mlra-visualizer
     src/main.c
-    src/App/Log.c
     src/Core/RegisterCost.c
     src/Core/RegisterInstruction.c
     src/Core/Scenario.c
+)
+
+add_custom_command(TARGET mlra-visualizer POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets $<TARGET_FILE_DIR:mlra-visualizer>/assets
+    VERBATIM
 )
 
 target_include_directories(mlra-visualizer PRIVATE
@@ -138,6 +142,8 @@ endif()
 
 # --- Linking ---
 target_link_libraries(mlra-visualizer PRIVATE
-    SDL3::SDL3
-    SDL3_ttf::SDL3_ttf
+    raylib
+)
+target_include_directories(mlra-visualizer PRIVATE
+    ${RAYGUI_INCLUDE_DIRS}
 )

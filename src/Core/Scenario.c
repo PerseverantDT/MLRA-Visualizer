@@ -2,8 +2,6 @@
 #include "MLRA/Core/RegisterCost.h"
 #include "MLRA/Core/RegisterInstruction.h"
 
-#include <SDL3/SDL_log.h>
-
 #include <assert.h>
 #include <errno.h>
 #include <inttypes.h>
@@ -17,30 +15,6 @@ struct MLRA_Scenario_
     MLRA_RegisterInstructionList *registerInstructions;
     MLRA_RegisterCost memorySpillCost;
 };
-
-static void MLRA_WarnWhenMemorySpillCostIsSmallerThanRegisterCost(
-    MLRA_RegisterCost const memorySpillCost,
-    size_t const registerIndex,
-    MLRA_RegisterCost const registerCost
-)
-{
-    if (registerCost.load <= memorySpillCost.load && registerCost.store <= memorySpillCost.store) {
-        return;
-    }
-
-    SDL_LogWarn(
-        SDL_LOG_CATEGORY_APPLICATION,
-        "Cost of spilling memory is not set higher than using register %llu. Using this scenario "
-        "in solvers without modifying either the memory spill cost or register use cost will "
-        "yield unexpected results.\n"
-        "Memory spill cost: Load -> %d, Store -> %d\n"
-        "Register %llu cost: Load -> %d, Store -> %d",
-        (unsigned long long)registerIndex,
-        memorySpillCost.load, memorySpillCost.store,
-        (unsigned long long)registerIndex,
-        registerCost.load, registerCost.store
-    );
-}
 
 void MLRA_DestroyScenario(
     MLRA_Scenario *const scenario
@@ -64,35 +38,17 @@ MLRA_Scenario *MLRA_CreateScenario(
 {
     MLRA_RegisterCostArray *registerCosts = MLRA_CreateRegisterCostArray(registerCount);
     if (registerCosts == nullptr) {
-        SDL_LogError(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "Could not create register cost array for scenario: %s",
-            strerror(errno)
-        );
-        
         return nullptr;
     }
 
     MLRA_RegisterInstructionList *registerInstructions = MLRA_CreateRegisterInstructionList();
     if (registerInstructions == nullptr) {
-        SDL_LogError(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "Could not create register instruction list for scenario: %s",
-            strerror(errno)
-        );
-
         MLRA_DestroyRegisterCostArray(registerCosts);
         return nullptr;
     }
 
     MLRA_Scenario *scenario = malloc(sizeof(MLRA_Scenario));
     if (scenario == nullptr) {
-        SDL_LogError(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "Could not create scenario: %s",
-            strerror(errno)
-        );
-
         MLRA_DestroyRegisterInstructionList(registerInstructions);
         MLRA_DestroyRegisterCostArray(registerCosts);
         return nullptr;
@@ -123,16 +79,6 @@ void MLRA_SetMemorySpillCostInScenario(
     assert(memorySpillCost.load > 0);
     assert(memorySpillCost.store > 0);
 
-    size_t registerCount = MLRA_GetRegisterCostArraySize(scenario->registerCosts);
-    for (size_t index = 0; index < registerCount; ++index) {
-        MLRA_RegisterCost registerCost = MLRA_GetRegisterCostInArray(scenario->registerCosts, index);
-        MLRA_WarnWhenMemorySpillCostIsSmallerThanRegisterCost(
-            memorySpillCost,
-            index,
-            registerCost
-        );
-    }
-
     scenario->memorySpillCost = memorySpillCost;
 }
 
@@ -153,12 +99,6 @@ void MLRA_SetRegisterCountInScenario(
 {
     MLRA_RegisterCostArray *registerCosts = MLRA_ResizeRegisterCostArray(scenario->registerCosts, count);
     if (registerCosts == nullptr) {
-        SDL_LogError(
-            SDL_LOG_CATEGORY_APPLICATION,
-            "Could not change scenario register count: %s",
-            strerror(errno)
-        );
-
         return;
     }
 
@@ -185,11 +125,6 @@ void MLRA_SetRegisterCostInScenario(
     assert(registerCost.load > 0);
     assert(registerCost.store > 0);
 
-    MLRA_WarnWhenMemorySpillCostIsSmallerThanRegisterCost(
-        scenario->memorySpillCost,
-        index,
-        registerCost
-    );
     MLRA_SetRegisterCostInArray(scenario->registerCosts, index, registerCost);
 }
 
