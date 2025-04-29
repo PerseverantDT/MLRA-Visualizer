@@ -155,6 +155,7 @@ endif()
 # --- Linking ---
 target_link_libraries(mlra-visualizer PRIVATE
     raylib
+    m
 )
 target_include_directories(mlra-visualizer PRIVATE
     ${RAYGUI_INCLUDE_DIRS}
